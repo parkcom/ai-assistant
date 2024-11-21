@@ -57,7 +57,6 @@ def ask_gpt(prompt, client: OpenAI):
 
 
 def main():
-    client: OpenAI = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
     st.set_page_config(page_title="음성 비서 프로그램", page_icon="🤖", layout="wide")
 
     if "check_audio" not in st.session_state:
@@ -71,6 +70,24 @@ def main():
                             Response to all input in 25 words and answer in koreans""",
             }
         ]
+
+    with st.sidebar:
+        openai_apikey = st.text_input(
+            "OpenAI API Key", placeholder="Enter your OpenAI API Key", type="password"
+        )
+
+        if openai_apikey:
+            st.session_state["OPENAI_API_KEY"] = openai_apikey
+
+        st.markdown("---")
+
+    try:
+        if st.session_state["OPENAI_API_KEY"]:
+            client: OpenAI = OpenAI(api_key=st.session_state["OPENAI_API_KEY"])
+
+    except KeyError:
+        st.error("OpenAI API Key를 입력하세요.")
+        return
 
     col1, col2 = st.columns(2)
 
